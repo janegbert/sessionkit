@@ -8,6 +8,12 @@ release notes, not links to public release artifacts. The project was named
 
 ## Unreleased
 
+- Experimental opt-in project workflow coaching, with explicit onboarding,
+  review and retention proposals for one compact project skill. Reuses canonical
+  docs and selectively loaded references/helpers; exact diffs and user approval
+  precede persistent workflow changes. Instruction-only, with no automatic memory
+  writes, transcript mining, helper execution or additional Jev requests.
+
 ### Added
 
 - Native Claude Code tools, `search_code` and `ask_file`, wrapping the existing

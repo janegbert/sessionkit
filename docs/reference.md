@@ -33,6 +33,20 @@ Codex and jcode currently have launcher support only.
   before a cold call rewrites a large context. **`sessionkit next`** closes a cold session from
   inside Claude Code and continues it in a fresh one.
 
+## Compact project workflow (experimental)
+
+The `projectWorkflow` plugin option defaults off. It adds short, stable coaching
+for the main agent and subagents: adapt within the task, reuse one project
+workflow entrypoint, load only needed references and favor canonical docs over
+copies. Durable workflow changes require a precise proposal and explicit approval.
+
+`/sessionkit:project-workflow onboard`, `review` and `propose <lesson>` are explicit
+proposal workflows, available even with coaching disabled. Default review budgets
+are 60 entrypoint lines, three owned references and two helpers, with justified
+exceptions; these are not hard enforcement. Nothing is automatically saved or
+executed by the hooks. Native memory writers and other features remain independent.
+See [project-workflow design, usage and limits](project-workflow.md).
+
 ## Install
 
 The tested installation path is macOS with a current Rust toolchain and Claude Code:

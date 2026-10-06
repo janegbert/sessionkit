@@ -7,6 +7,7 @@ import { register as edit } from "./edit.js";
 import { register as effort } from "./effort.js";
 import { register as fold } from "./fold.js";
 import { register as prompt } from "./prompt.js";
+import { register as projectWorkflow } from "./project-workflow.js";
 import { register as permissionProbe } from "./permission-probe.js";
 import { register as autoPermission } from "./auto-permission.js";
 import { register as read } from "./read.js";
@@ -23,6 +24,7 @@ export const register = (on, options) => {
   effort(on, options);
   fold(on, options);
   prompt(on, options);
+  projectWorkflow(on, options);
   permissionProbe(on, options);
   autoPermission(on, options);
   read(on, options);

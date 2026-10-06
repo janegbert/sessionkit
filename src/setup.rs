@@ -38,7 +38,7 @@ const SKILL: &str = include_str!("SKILL.md");
 const SKILL_NAME: &str = "sessionkit";
 const OLD_SKILL_NAME: &str = "sessionkit-grep";
 
-const PLUGIN_FILES: [(&str, &str); 23] = [
+const PLUGIN_FILES: [(&str, &str); 27] = [
     (".claude-plugin/plugin.json", include_str!("../plugin/.claude-plugin/plugin.json")),
     (".claude-plugin/marketplace.json", include_str!("../plugin/.claude-plugin/marketplace.json")),
     ("hooks/hooks.json", include_str!("../plugin/hooks/hooks.json")),
@@ -57,6 +57,10 @@ const PLUGIN_FILES: [(&str, &str); 23] = [
     ("hooks/auto-permission.js", include_str!("../plugin/hooks/auto-permission.js")),
     ("hooks/permission-probe.js", include_str!("../plugin/hooks/permission-probe.js")),
     ("hooks/search-tools.js", include_str!("../plugin/hooks/search-tools.js")),
+    ("hooks/project-workflow.js", include_str!("../plugin/hooks/project-workflow.js")),
+    ("skills/project-workflow/SKILL.md", include_str!("../plugin/skills/project-workflow/SKILL.md")),
+    ("skills/project-workflow/GUIDE.md", include_str!("../plugin/skills/project-workflow/GUIDE.md")),
+    ("skills/project-workflow/TEMPLATE.md", include_str!("../plugin/skills/project-workflow/TEMPLATE.md")),
     ("hooks/prompt.js", include_str!("../plugin/hooks/prompt.js")),
     ("hooks/read.js", include_str!("../plugin/hooks/read.js")),
     ("hooks/repeat.js", include_str!("../plugin/hooks/repeat.js")),
@@ -64,7 +68,7 @@ const PLUGIN_FILES: [(&str, &str); 23] = [
     ("output-styles/robot.md", include_str!("../plugin/output-styles/robot.md")),
 ];
 /// What the plugin does, one line per hook or file, for the output of setup.
-const PLUGIN_FEATURES: [&str; 12] = [
+const PLUGIN_FEATURES: [&str; 13] = [
     "/compact and auto-compaction go through sessionkit compact, without a summary",
     "before a message to a cold session, a dialog asks: continue here, or compacted first",
     "before a message to a warm session above 375K, a dialog offers to compact first, or always at 375K",
@@ -76,6 +80,7 @@ const PLUGIN_FEATURES: [&str; 12] = [
     "per typed prompt, in shadow: the effort level Jev finds enough, beside the one the turn ran at; applying it as an option in /config",
     "as an option in /config: when a turn ends that added much tool output, its outputs are cut and the prompt cache stays",
     "the architect: /sessionkit:architecture onboard, then Jev wakes it for architectural plans and changes; advise, shadow or off in /config",
+    "experimental project workflow: opt-in coaching, one compact project skill, selective references/helpers and approved diffs; /sessionkit:project-workflow onboard or review",
     "the output style sessionkit-robot, to pick with /output-style sessionkit-robot",
 ];
 

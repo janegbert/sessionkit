@@ -58,6 +58,11 @@ requests are implemented in Rust, not duplicated in JavaScript.
 - Search tools over the existing CLI: `search_code` and `ask_file`, with bounded
   inputs, normal source exclusions and navigation guidance. Search offers a
   compact shortlist and shares source budget before expanding excerpts.
+- The experimental projectWorkflow option provides instruction-only coaching for
+  main agents and subagents. The explicit project-workflow skill proposes one
+  compact project entrypoint and selective references/helpers, with exact diffs
+  and approval before persistence. It makes no hook-side writes, model calls or
+  script executions, and does not enforce native memory behavior.
 - Context and cache integrations: compaction, turn folding, cold-cache dialogs,
   large-file outlines and eligible unread-file edit retries.
 - Agent integrations: shadow routing, cost-awareness notes and repeated-report

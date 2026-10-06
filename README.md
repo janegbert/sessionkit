@@ -132,6 +132,16 @@ notifying the agent, and **off** disables checks and the onboarding offer.
 Checks require a TypeSafe key and send changes and architecture memory to TypeSafe.
 [Architect details and limitations →](docs/reference.md#the-architect)
 
+## Keep project workflow knowledge compact (experimental)
+
+Enable *Compact project workflow* to coach agents to improve their approach within
+the task, without automatically turning observations into skills or memories.
+Use `/sessionkit:project-workflow onboard` to propose one compact project skill,
+`review` to consolidate it, or `propose <lesson>` to assess a recurring procedure.
+Existing docs stay authoritative; references load only when needed. Persistent
+changes require an exact proposed diff and explicit approval. This is instruction
+coaching, not a blocker for native memory writes. [Design and limits →](docs/project-workflow.md)
+
 ## Configure the plugin
 
 In Claude Code, open **`/config`** and find SessionKit's plugin options. You can
@@ -151,6 +161,7 @@ keep their current values. Restart Claude Code after changing plugin configurati
 | Option / config key | Default | What it changes |
 | --- | --- | --- |
 | Code search tools / `codeSearchTools` | On | Offers search_code and ask_file with navigation guidance. |
+| Compact project workflow / `projectWorkflow` | Off | Experimental coaching and explicit project-skill onboarding/review; no automatic persistence. |
 | Architect / `architect` | `advise` | Choose `advise`, `shadow` or `off`; checks begin after onboarding. |
 | Outline first / `readOutline` | Off | First whole read of a large file shows its opening and declarations; a second read returns it whole. |
 | Fold a turn / `foldTurns` | Off | Cuts large read-only tool outputs after a turn; interactive sessions only. |
@@ -188,6 +199,7 @@ not yet been verified live.
 
 - [Full reference: commands, setup, architecture, costs and configuration](docs/reference.md)
 - [Agent search tools](docs/code-search-tools.md)
+- [Compact project workflow experiment](docs/project-workflow.md)
 - [Architecture overview](ARCHITECTURE.md)
 - [Changelog](CHANGELOG.md)
 

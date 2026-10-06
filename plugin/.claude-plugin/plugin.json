@@ -22,6 +22,12 @@
       "description": "Diagnostic only: logs tool.check inputs and verdicts, including potentially sensitive arguments, to the debug log. Never changes a permission decision or prompts for approval.",
       "default": false
     },
+    "projectWorkflow": {
+      "type": "boolean",
+      "title": "Compact project workflow (experimental)",
+      "description": "Coaches main agents and subagents to adapt within a task and reuse one compact project skill with selectively loaded references/helpers. Persistent workflow changes require an exact proposal and explicit user approval. Instruction-only: no automatic skill/memory writes, transcript mining, script execution or Jev calls; does not block other memory writers. Use /sessionkit:project-workflow onboard or review explicitly.",
+      "default": false
+    },
     "architect": {
       "type": "string",
       "title": "Architect",
