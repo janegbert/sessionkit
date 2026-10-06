@@ -6,11 +6,18 @@ promotion gates: [docs/survey-method.md](../../docs/survey-method.md).
 
 ## Corpus and contract
 
-One artificial, ten-file Python repository has eight labeled checks in rubric.json:
+The original development fixture is an artificial, ten-file Python repository
+with eight labeled checks in rubric.json:
 multiple launch paths, a request path, a worker/external interface, direct-write
 bypasses, configuration precedence, stale docs, a declared unused dependency and
 an unconnected prototype. The README explicitly warns it is historical: this is
 an easy diagnostic fixture, not a held-out benchmark or eight independent repos.
+
+Two additional, less signposted transfer cases live in cases/snapshot and
+cases/revision (five frozen rubric items each in cases/rubric.json). They contrast
+copied jobs with identifier jobs, revision caching and dynamic activation. They
+are targeted author-built fixtures, not an independent held-out corpus. Offline
+oracles check ordinary transitions and a later-discovered identity-reuse failure.
 
 The legacy condition uses stages 1-4 of the current ONBOARD.md. The candidate uses
 SURVEY.md, with TRACE.md and REPORT.md read at their relevant stages. Both get the
@@ -24,8 +31,9 @@ are tested. Shared evidence instructions already strengthen the legacy prompt.
 python3 -m unittest discover -s eval/surveyor -p 'test_*.py' -v
 ```
 
-Six tests cover schema/standing, fabricated quotes, line ranges, traversal/symlink
-escapes, missing evidence, duplicate IDs and stream parsing. Valid quotes are
+Sixteen tests cover schema/standing, fabricated quotes, line ranges,
+traversal/symlink escapes, missing evidence, duplicate IDs/stream rows,
+counterbalanced scheduling, fixture selection and executable state oracles. Valid quotes are
 explicitly **not** treated as a score for architectural truth.
 
 ## Optional paid model comparison
@@ -36,10 +44,12 @@ Claude model requests (API-equivalent cost also reported for subscriptions):
 ```sh
 python3 eval/surveyor/run.py --variant both --model sonnet --effort low
 # Counterbalance order across repetitions; not a substitute for held-out repos:
-python3 eval/surveyor/run.py --variant both --repeat 3
+python3 eval/surveyor/run.py --case transfer --variant both --repeat 2
+# Select one case: development (default), snapshot or revision; all runs all three.
+python3 eval/surveyor/run.py --case revision --variant survey
 ```
 
-The runner copies only fixture source into a fresh temporary project, never gold
+The runner copies only the selected synthetic case into a fresh temporary project, never gold
 labels or evaluation files. It places just the method references beside it. It
 turns off auto-memory, explicitly disables installed plugin IDs, restricts tools
 to Read/Glob/Grep, disables session persistence and MCP, and detects unexpected
@@ -52,16 +62,21 @@ not a guarantee on billing; a timeout/cutoff is an incomplete run. Output defaul
 to a private system temporary directory, not committed eval/results. Reusing an
 existing run directory fails rather than overwriting evidence.
 
-Artifacts per run: prompt.txt, output.jsonl, stderr.txt, report.json, metadata.json.
+Artifacts per run: prompt.txt, output.jsonl, stderr.txt, report.json, metadata.json,
+and candidate method snapshots under method/.
 Raw streams may include host metadata; keep them local, do not publish them.
 Metadata records exact fixture/prompt hashes, version, resolved model usage,
 source-tool counts, output characters, elapsed time and Claude dollar estimates.
+Method/schema/rubric hashes identify the frozen evaluation version; gold labels
+are hashed locally but not passed to the model.
 Temporary source paths make the prompt hashes differ across runs; saved prompts
 and source hashes preserve what each run actually saw. Tool counts are measured
 from unique stream call IDs, not the model's self-report.
 
 ```sh
 python3 eval/surveyor/check.py /path/to/report.json
+# For a transfer case, use the corresponding source root:
+python3 eval/surveyor/check.py /path/to/report.json --root eval/surveyor/cases/revision
 ```
 
 Exit 0 means citation/structure checks pass, **not** a semantically correct survey.
@@ -77,7 +92,16 @@ preconditions), not just matching words. Classify questions as useful intent,
 factual, bundled or unsupported. Do not let a good quote, a convincing diagram
 or a single aggregate number hide unsupported assertions.
 
-### First clean pair, 2026-10-06
+### Latest iteration
+
+[The v2 comparison](RESULTS-v2.md) has eight counterbalanced transfer runs and an
+original-development regression pair. The candidate now states the conditional
+rename behavior explicitly, but still fails one citation check and misses an
+identity-reuse cache counterexample. **Onboarding remains unchanged.** The
+semantic review is the implementing assistant's source/oracle analysis, not an
+independent expert assessment. No automatic truth score is inferred.
+
+### Historical first clean pair, 2026-10-06
 
 Claude Code 2.1.291, resolved model Sonnet 5.5, low effort, one run per condition:
 

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from check import validate
-from run import parse_stream
+from run import parse_stream, schedule, fixture_path
 
 HERE = Path(__file__).parent
 
@@ -63,7 +63,22 @@ class CitationChecks(unittest.TestCase):
         self.assertEqual(result["structured_output"], report())
         self.assertEqual(chars, 0)
         self.assertEqual(plugins, [])
+        tool_result = {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "call1", "content": "text"}]}}
+        stream = "\n".join(json.dumps(e) for e in [tool_result, tool_result, {"type": "result"}])
+        self.assertEqual(parse_stream(stream)[2], 4)
         with self.assertRaises(ValueError): parse_stream("not json\nnull\n0")
+
+
+class ComparisonPlan(unittest.TestCase):
+    def test_case_orders_are_counterbalanced_within_and_across_repetitions(self):
+        planned = list(schedule(["snapshot", "revision"], 2, "both"))
+        self.assertEqual(len(planned), 8)
+        self.assertEqual([v for r, c, v in planned if c == "snapshot"], ["legacy", "survey", "survey", "legacy"])
+        self.assertEqual([v for r, c, v in planned if c == "revision"], ["survey", "legacy", "legacy", "survey"])
+
+    def test_only_named_synthetic_sources_can_be_selected(self):
+        for name in ["development", "snapshot", "revision"]: self.assertTrue(fixture_path(name).is_dir())
+        with self.assertRaises(ValueError): fixture_path("../rubric.json")
 
 
 if __name__ == "__main__": unittest.main()

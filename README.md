@@ -145,7 +145,7 @@ coaching, not a blocker for native memory writes. [Design and limits →](docs/p
 The proposed as-built **surveyor** is still a research prototype, not a replacement
 for onboarding. Its [method and evaluation](docs/survey-method.md) separate source
 observations from intent and check representative paths and counterevidence. The
-first comparison does not yet justify promotion.
+comparisons do not yet justify promotion; current results are recorded with the evaluator.
 
 ## Configure the plugin
 

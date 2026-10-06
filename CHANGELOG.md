@@ -8,6 +8,11 @@ release notes, not links to public release artifacts. The project was named
 
 ## Unreleased
 
+- Refine the survey research prototype for state-dependent behavior and verified
+  citation ranges. Add two frozen synthetic transfer cases, counterbalanced runs,
+  executable state oracles and saved method snapshots. Document remaining citation,
+  cache identity and delivery-guarantee failures; onboarding stays unchanged.
+
 - Add an as-built survey research method and read-only synthetic comparison
   harness, with offline citation checks and explicit human semantic review.
   Initial results do not justify replacing architect onboarding; no production

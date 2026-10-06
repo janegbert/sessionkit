@@ -1,0 +1,19 @@
+{
+  "version": "transfer-v2",
+  "status": "Frozen before first model runs; targeted author-built transfer cases, not an independent held-out corpus. Models receive only one case's source and method references, never this rubric or executable oracles.",
+  "snapshot": [
+    {"id":"copied-payload","expect":"Submit copies the current record into the pending payload. Retitle updates the record, not that payload. Pending delivery therefore keeps the earlier title; no new job is created by retitle.","sources":["app/store.py"]},
+    {"id":"ack-state","expect":"Positive acknowledgement removes the first job. False acknowledgement retains it for a future tick. Retitling after completion does not schedule a delivery.","sources":["app/store.py","app/launch.py"]},
+    {"id":"factory","expect":"RemoteStore is imported but not in BACKENDS. The only registered kind is memory; selecting remote raises KeyError, not remote activation.","sources":["app/factory.py","app/remote.py"]},
+    {"id":"configuration","expect":"STORE_KIND overrides launch.toml's store setting. The checked-in value is memory; actual environment and execution are unobserved.","sources":["app/launch.py","launch.toml"]},
+    {"id":"topology","expect":"The stdin event loop dispatches submit/retitle/tick. Tick receives a stdout sender which returns True. No persistent store or active network sender is established by the inspected bootstrap.","sources":["app/launch.py","app/factory.py","app/store.py"]}
+  ],
+  "revision": [
+    {"id":"live-key","expect":"Pending jobs hold record identifiers, not copied payloads. Step reads the current record, so a pending job can send a retitled value without another enqueue.","sources":["app/bootstrap.py","app/worker.py","app/repository.py"]},
+    {"id":"versioned-cache","expect":"Cache is keyed by (record key, revision), and retitle increments revision. An old entry can remain without making the next step serve old data. Explicit invalidation is not necessary for this path.","sources":["app/cache.py","app/worker.py","app/repository.py"]},
+    {"id":"ack-state","expect":"True acknowledgement removes the pending key; false retains it. Retry after retitle can send a newer revision. Once completed, retitle alone does not schedule publication.","sources":["app/worker.py","app/bootstrap.py"]},
+    {"id":"dynamic-activation","expect":"Build's default sender is resolved from a configured module:function string through importlib and getattr. The default selects app.transport:send despite no direct transport import; environment or injected sender can replace it.","sources":["app/bootstrap.py","app/config.py","app/transport.py"]},
+    {"id":"scope","expect":"Transport declares an HTTP POST; no supplied runtime evidence proves successful delivery/deployment. In-memory repo, cache and pending list are instantiated by Application, with no durable backend established.","sources":["app/bootstrap.py","app/repository.py","app/cache.py","app/transport.py"]}
+  ],
+  "semantic_review": "Rate each item supported/partial/missed/wrong, quote claim IDs, and separate evidence sufficiency from factual truth. Check pending/completed/failure preconditions. No production observations or human intent confirmations are supplied. No automatic semantic score."
+}

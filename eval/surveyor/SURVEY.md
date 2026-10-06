@@ -15,6 +15,8 @@ An observed dependency or violation is not automatically an intended rule or deb
    consequential boundary/error/alternative path. At this stage read
    `__METHOD_DIR__/TRACE.md`; retrieve only the source needed to test the map.
 4. Seek counterevidence before finalizing central ownership/configuration claims.
+   Trace payload vs identifier, revision/cache keys, and pending/completed/failure
+   conditions before concluding that an effect always or never occurs.
    Scope negative findings to the entrypoints and references actually inspected.
 5. For evidence standings and calibration, now read `__METHOD_DIR__/REPORT.md`.
    Return the shared report contract from the task, with locations and unknowns.

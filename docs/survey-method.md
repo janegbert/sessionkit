@@ -39,7 +39,10 @@ this particular agent workflow or that it is already the best method.
 3. **Representative slices.** Trace one primary request, one job/operational path
    where present, and one boundary/error path likely to disprove the initial map.
    Identify who invokes what, how data moves and where writes actually occur.
-4. **Try to disprove.** Follow configuration precedence and alternate entrypoints;
+4. **Try to disprove.** Track payload vs identifier, pending/completed/failure
+   states, cache revisions and acknowledgement conditions before making behavioral
+   claims. Verify citation ranges against actual numbered source, not memory.
+   Follow configuration precedence and alternate entrypoints;
    search for direct writes bypassing a claimed owner, inactive adapters and
    contradictory docs. A declared dependency is not proof of active use. Searches
    support scoped negative findings, not universal absence claims.
@@ -78,6 +81,12 @@ Use independent repetitions and more repositories before claiming improvement.
 
 Promotion requires a reviewed held-out set, no increase in unsupported/normative
 claims, non-regressed important-path coverage and acceptable combined cost/context.
+The [v2 results](../eval/surveyor/RESULTS-v2.md) improve the original conditional
+rename explanation, but show higher overhead, a citation failure and an unhandled
+identity-reuse cache case. These are targeted author-built transfer examples, not
+an independent held-out corpus; semantic review was by the implementing assistant.
+The evidence still does not justify promotion.
+
 Also test the eventual accepted baseline and user calibration round trip. Until
 then, do not reroute onboarding, register a production surveyor, increase memory
 files or advertise the method as superior.
