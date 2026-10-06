@@ -63,6 +63,10 @@ requests are implemented in Rust, not duplicated in JavaScript.
   compact project entrypoint and selective references/helpers, with exact diffs
   and approval before persistence. It makes no hook-side writes, model calls or
   script executions, and does not enforce native memory behavior.
+- eval/surveyor is an isolated research harness for as-built reconstruction. It
+  compares adapted onboarding prompts on synthetic source, checks citations and
+  leaves architectural truth to semantic review. It is not an installed agent,
+  makes model calls only when explicitly run, and does not change onboarding.
 - Context and cache integrations: compaction, turn folding, cold-cache dialogs,
   large-file outlines and eligible unread-file edit retries.
 - Agent integrations: shadow routing, cost-awareness notes and repeated-report

@@ -1,0 +1,9 @@
+[project]
+name = "sample-index-service"
+version = "0.0.0"
+dependencies = ["redis>=5"]
+
+[project.scripts]
+index-api = "src.api:main"
+index-worker = "src.worker:main"
+index-maintenance = "src.cli:main"

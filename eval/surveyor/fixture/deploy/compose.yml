@@ -1,0 +1,15 @@
+services:
+  api:
+    image: example/index-service
+    command: python -m src.api
+    environment:
+      PROJECT_DB: /data/shared.sqlite
+    volumes: [data:/data]
+  worker:
+    image: example/index-service
+    command: python -m src.worker
+    environment:
+      PROJECT_DB: /data/shared.sqlite
+    volumes: [data:/data]
+volumes:
+  data:

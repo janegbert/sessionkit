@@ -8,6 +8,11 @@ release notes, not links to public release artifacts. The project was named
 
 ## Unreleased
 
+- Add an as-built survey research method and read-only synthetic comparison
+  harness, with offline citation checks and explicit human semantic review.
+  Initial results do not justify replacing architect onboarding; no production
+  surveyor, extra memory or automatic research is enabled.
+
 - Fix architect onboarding from the offer dialog: dispatch the slash command via
   the host command API instead of submitting it as a model prompt. Regression
   tests cover host command dispatch and failure without a prompt fallback.

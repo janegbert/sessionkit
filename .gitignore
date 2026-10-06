@@ -1,4 +1,5 @@
 eval/results/
+__pycache__/
 target/
 .claude/
 .env

@@ -142,6 +142,11 @@ Existing docs stay authoritative; references load only when needed. Persistent
 changes require an exact proposed diff and explicit approval. This is instruction
 coaching, not a blocker for native memory writes. [Design and limits →](docs/project-workflow.md)
 
+The proposed as-built **surveyor** is still a research prototype, not a replacement
+for onboarding. Its [method and evaluation](docs/survey-method.md) separate source
+observations from intent and check representative paths and counterevidence. The
+first comparison does not yet justify promotion.
+
 ## Configure the plugin
 
 In Claude Code, open **`/config`** and find SessionKit's plugin options. You can

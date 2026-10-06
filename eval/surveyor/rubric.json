@@ -1,0 +1,15 @@
+{
+  "scope": "One synthetic repository, static source/configuration only; not a held-out or representative benchmark.",
+  "facts": [
+    {"id":"entrypoints","expect":"Package scripts declare API, worker and maintenance CLI. Compose declares separate API and worker processes; actual deployment is unobserved.","sources":["pyproject.toml","deploy/compose.yml","src/cli.py"]},
+    {"id":"request","expect":"Normal API POST calls create_item, which inserts an item and its pending job through storage.","sources":["src/api.py","src/service.py","src/storage.py"]},
+    {"id":"worker","expect":"Worker polls pending jobs in SQLite, publishes to an external HTTP index endpoint, then marks completion.","sources":["src/worker.py","src/storage.py","src/service.py"]},
+    {"id":"bypass","expect":"Admin rename and maintenance CLI directly call storage.rename_direct, bypassing the service. Intent is unknown, not automatically accepted debt.","sources":["src/api.py","src/cli.py","src/storage.py"]},
+    {"id":"config","expect":"PROJECT_DB overrides dev.sqlite. Compose declares /data/shared.sqlite and a shared volume for both services; this is not live production evidence.","sources":["src/settings.py","deploy/compose.yml"]},
+    {"id":"stale-docs","expect":"README's sole-entrypoint, sole-writer, Redis-job and fixed-database claims conflict with checked-in source/configuration.","sources":["README.md","pyproject.toml","src/api.py","src/storage.py","src/settings.py"]},
+    {"id":"unused-dependency","expect":"Redis is declared, but inspected job implementation uses SQLite. Do not infer Redis is deployed from the dependency alone or assert universal non-use.","sources":["pyproject.toml","src/storage.py","src/worker.py"]},
+    {"id":"prototype","expect":"VectorSearch exists as a prototype; no activation is found in inspected entrypoints. A definition alone does not prove runtime use.","sources":["src/experimental/vector_search.py","src/api.py","src/worker.py"]}
+  ],
+  "question_review": {"useful":"Whether direct admin/maintenance writes should be deliberate exceptions or future changes should follow a service ownership boundary.","avoid":"Ask the user whether the checked-in database override exists, how many declared entrypoints there are, or whether SQLite SQL statements are present."},
+  "scoring": {"coverage":"Human rates each fact supported / partial / missed / wrong, considering cited evidence.","precision":"Human labels each report claim supported / unsupported / contradicted; a valid quote does not settle this.","standing":"Reject unsupported norms, automatic accepted-debt labels and claims of observed production state.","calibration":"Rate each question consequential intent / factual / unsupported premise.","cost":"Compare source-tool calls, tool-output characters, usage and API-equivalent Claude dollars. No Jev tools are offered."}
+}
