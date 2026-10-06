@@ -8,6 +8,10 @@ release notes, not links to public release artifacts. The project was named
 
 ## Unreleased
 
+- Fix architect onboarding from the offer dialog: dispatch the slash command via
+  the host command API instead of submitting it as a model prompt. Regression
+  tests cover host command dispatch and failure without a prompt fallback.
+
 - Experimental opt-in project workflow coaching, with explicit onboarding,
   review and retention proposals for one compact project skill. Reuses canonical
   docs and selectively loaded references/helpers; exact diffs and user approval

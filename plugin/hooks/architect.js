@@ -98,7 +98,8 @@ export async function offer($) {
     } catch {
       return; // dismissed, or nobody to ask: asked again next session
     }
-    if (choice === ONBOARD) await $.prompt.submit({ text: "/sessionkit:architecture onboard" });
+    // Slash commands must use the command API, not a model prompt submission.
+    if (choice === ONBOARD) await $.command.run({ command: "sessionkit:architecture", args: "onboard" });
     if (choice === NEVER) {
       await $.process.run([SESSIONKIT, "hook", "architect-decline"], { stdin: JSON.stringify({ root: check.root }), timeoutMs: TIMEOUT_MS });
       $.ui.toast("sessionkit: no architect for this project. /sessionkit:architecture onboard still works when you change your mind.");

@@ -148,14 +148,15 @@ test("a note for a loop that has ended goes to the main conversation", async ($,
 
 /** The engine for offer: sessionkit's answers per hook, and what the plugin did with them. */
 function offering(answer, choice) {
-  const seen = { asked: [], ran: [], submitted: [], toasts: [], logs: [] };
+  const seen = { asked: [], ran: [], commands: [], toasts: [], logs: [] };
   const $ = {
     session: { cwd: async () => "/repo/src" },
     process: { run: async (argv, { stdin }) => {
       seen.ran.push({ hook: argv[2], input: JSON.parse(stdin) });
       return { exitCode: 0, stdout: JSON.stringify(argv[2] === "architect-offer" ? answer : { saved: "x" }), stderr: "" };
     } },
-    prompt: { submit: async ({ text }) => void seen.submitted.push(text) },
+    command: { run: async (input) => { seen.commands.push(input); return { text: "" }; } },
+    prompt: { submit: async () => { throw new Error("slash commands must not be submitted as prompts"); } },
   };
   return { seen, $: { ...engine($, seen, choice), ui: { ...engine($, seen, choice).ui, toast: (text) => void seen.toasts.push(text) } } };
 }
@@ -167,14 +168,36 @@ test("a repository without an architect is offered one, and onboarding starts on
   await offer($);
   expect(seen.ran[0]).toEqual({ hook: "architect-offer", input: { cwd: "/repo/src" } });
   expect(seen.asked).toEqual([{ question: OFFER.question, options: ["Onboard now", "Not now", "Never for this project"] }]);
-  expect(seen.submitted).toEqual(["/sessionkit:architecture onboard"]);
+  expect(seen.commands).toEqual([{ command: "sessionkit:architecture", args: "onboard" }]);
+  expect(seen.logs).toEqual([]);
+});
+
+test("onboarding dispatch reaches the host command chain", async ($, on) => {
+  const commands = [];
+  on("command.run", { command: "sessionkit:architecture" }, (_$, event) => {
+    commands.push({ command: event.command, args: event.args });
+    return { text: "onboarding dispatched" };
+  });
+  const w = offering(OFFER, "Onboard now");
+  w.$.command = $.command;
+  await offer(w.$);
+  expect(commands).toEqual([{ command: "sessionkit:architecture", args: "onboard" }]);
+  expect(w.seen.logs).toEqual([]);
+});
+
+test("failed onboarding command is logged without a prompt fallback", async () => {
+  const w = offering(OFFER, "Onboard now");
+  w.$.command.run = async () => { throw new Error("command unavailable"); };
+  await offer(w.$);
+  expect(w.seen.logs).toEqual(["sessionkit architect: no offer (command unavailable)"]);
+  expect(w.seen.ran.map((r) => r.hook)).toEqual(["architect-offer"]);
 });
 
 test("never for this project is saved for that repository", async () => {
   const { seen, $ } = offering(OFFER, "Never for this project");
   await offer($);
   expect(seen.ran[1]).toEqual({ hook: "architect-decline", input: { root: "/repo" } });
-  expect(seen.submitted).toEqual([]);
+  expect(seen.commands).toEqual([]);
   expect(seen.toasts.length).toBe(1);
 });
 
@@ -183,6 +206,6 @@ test("not now, a dismissed question or a repository that needs no offer changes 
     const { seen, $ } = offering(answer, choice);
     await offer($);
     expect(seen.ran.map((r) => r.hook)).toEqual(["architect-offer"]);
-    expect(seen.submitted).toEqual([]);
+    expect(seen.commands).toEqual([]);
   }
 });
