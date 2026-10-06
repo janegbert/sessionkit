@@ -24,6 +24,8 @@ An observed dependency or violation is not automatically an intended rule or deb
 Stop when important paths have support and counterchecks, or the task budget is
 spent. Mark missing evidence; do not equate a directory scan with complete coverage.
 Do not pursue exhaustiveness, impose new layers, execute helpers, write skills,
-memories/ADRs/baselines, mine transcripts, browse or make paid tool requests.
+memories/ADRs/baselines, mine transcripts, browse or invoke unoffered tools.
+Use explicitly offered inspection tools when suitable, under their disclosure and
+permission rules. Their answers are leads; verify source, state and citations.
 Do not elevate observations to design policy. The parent/user decides what to
 accept and confirms intent before the architect gets a baseline.

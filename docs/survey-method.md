@@ -87,6 +87,12 @@ identity-reuse cache case. These are targeted author-built transfer examples, no
 an independent held-out corpus; semantic review was by the implementing assistant.
 The evidence still does not justify promotion.
 
+A later [native-tool comparison](../eval/surveyor/RESULTS-tools.md) holds the
+procedure fixed with/without the production search tools and guidance. All four
+unforced runs use ordinary inspection; a separate forced smoke proves dispatch
+only. Search usage/cost remains incomplete when grep runs, so no combined savings
+are claimed. Existing evidence still does not justify rerouting onboarding.
+
 Also test the eventual accepted baseline and user calibration round trip. Until
 then, do not reroute onboarding, register a production surveyor, increase memory
 files or advertise the method as superior.

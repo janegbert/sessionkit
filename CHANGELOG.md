@@ -8,6 +8,11 @@ release notes, not links to public release artifacts. The project was named
 
 ## Unreleased
 
+- Add a controlled survey evaluation with/without only native SessionKit search
+  tools, synthetic-root CLI guards and conservative Jev cost journals. Real
+  dispatch works in a separate forced smoke; unforced runs do not choose the
+  tools, so no adoption, savings or onboarding promotion is claimed.
+
 - Refine the survey research prototype for state-dependent behavior and verified
   citation ranges. Add two frozen synthetic transfer cases, counterbalanced runs,
   executable state oracles and saved method snapshots. Document remaining citation,

@@ -31,9 +31,10 @@ are tested. Shared evidence instructions already strengthen the legacy prompt.
 python3 -m unittest discover -s eval/surveyor -p 'test_*.py' -v
 ```
 
-Sixteen tests cover schema/standing, fabricated quotes, line ranges,
+Twenty-one tests cover schema/standing, fabricated quotes, line ranges,
 traversal/symlink escapes, missing evidence, duplicate IDs/stream rows,
-counterbalanced scheduling, fixture selection and executable state oracles. Valid quotes are
+counterbalanced scheduling, fixture selection, executable state oracles,
+minimal native-plugin packaging, synthetic-root guards and conservative costs. Valid quotes are
 explicitly **not** treated as a score for architectural truth.
 
 ## Optional paid model comparison
@@ -47,23 +48,31 @@ python3 eval/surveyor/run.py --variant both --model sonnet --effort low
 python3 eval/surveyor/run.py --case transfer --variant both --repeat 2
 # Select one case: development (default), snapshot or revision; all runs all three.
 python3 eval/surveyor/run.py --case revision --variant survey
+# Same procedure with/without only the native SessionKit tools:
+python3 eval/surveyor/run.py --variant survey --case tooling --tool-profile both
 ```
 
 The runner copies only the selected synthetic case into a fresh temporary project, never gold
 labels or evaluation files. It places just the method references beside it. It
 turns off auto-memory, explicitly disables installed plugin IDs, restricts tools
-to Read/Glob/Grep, disables session persistence and MCP, and detects unexpected
+to Read/Glob/Grep by default, disables session persistence and external MCP, and detects unexpected
 plugins/tools and changed fixture files. Native host behavior is not sandboxed;
 this is not an OS-level filesystem boundary. Do not pass client code to this toy
-runner. No Jev tools, runtime execution or browsing are offered.
+runner. Runtime execution and browsing are not offered. The optional sessionkit
+tool profile adds only the production search module in a temporary plugin; its
+native tools invoke real paid Jev-backed grep/ask, restricted to synthetic source.
 
 Default timeout is 180 seconds and Claude budget $2 per run. Bounds are CLI-level,
-not a guarantee on billing; a timeout/cutoff is an incomplete run. Output defaults
+not a guarantee on billing; a timeout/cutoff is an incomplete run. The Claude
+budget does not cap Jev calls. The native CLI proxy has a 115-second timeout;
+unknown/incomplete Jev usage stays unknown, never silently zero. Output defaults
 to a private system temporary directory, not committed eval/results. Reusing an
 existing run directory fails rather than overwriting evidence.
 
 Artifacts per run: prompt.txt, output.jsonl, stderr.txt, report.json, metadata.json,
-and candidate method snapshots under method/.
+and candidate method snapshots under method/. Native runs also have jev.jsonl,
+recorded tool inventory/selection, production search-module hash and (in future
+runs) CLI version/binary identity.
 Raw streams may include host metadata; keep them local, do not publish them.
 Metadata records exact fixture/prompt hashes, version, resolved model usage,
 source-tool counts, output characters, elapsed time and Claude dollar estimates.
@@ -71,7 +80,9 @@ Method/schema/rubric hashes identify the frozen evaluation version; gold labels
 are hashed locally but not passed to the model.
 Temporary source paths make the prompt hashes differ across runs; saved prompts
 and source hashes preserve what each run actually saw. Tool counts are measured
-from unique stream call IDs, not the model's self-report.
+from unique stream call IDs, not the model's self-report. CLI journals distinguish
+reported ask cost estimates from unknown grep/failure costs; combined estimates
+are null when Jev cost is incomplete.
 
 ```sh
 python3 eval/surveyor/check.py /path/to/report.json
@@ -92,7 +103,14 @@ preconditions), not just matching words. Classify questions as useful intent,
 factual, bundled or unsupported. Do not let a good quote, a convincing diagram
 or a single aggregate number hide unsupported assertions.
 
-### Latest iteration
+### Latest tool comparison
+
+[Native-tool results](RESULTS-tools.md): four unforced paired runs advertise the
+tools but never select them, including an inert-padding read-size diagnostic.
+A separately forced two-tool smoke verifies real CLI dispatch but is not evidence
+of spontaneous adoption. No onboarding or user plugin settings changed.
+
+### Previous method iteration
 
 [The v2 comparison](RESULTS-v2.md) has eight counterbalanced transfer runs and an
 original-development regression pair. The candidate now states the conditional
