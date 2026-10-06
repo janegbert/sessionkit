@@ -21,7 +21,9 @@ asked for: a ranked list with source, or a probability.
 With the SessionKit plugin and function hooks enabled, prefer the native tools
 `mcp__sessionkit__search_code` and `mcp__sessionkit__ask_file` when available. They wrap
 these same commands, so source handling and costs are the same. search_code takes a
-natural-language `question`, optional `root` and `max_source_bytes` (default 12000).
+natural-language `question`, optional `root`, `max_source_bytes` (default 12000)
+and `max_files` (default 8). The shortlist reports the total discovered count;
+increase max_files to see more. Partial source snippets are explicitly labeled.
 ask_file takes a `path`, a `questions` array (up to ten), and optional `mode: "find"`
 for one question. If they are unavailable, use the CLI examples below. Do not issue
 both a native call and the equivalent CLI call for the same question.

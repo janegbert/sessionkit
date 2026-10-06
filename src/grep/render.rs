@@ -6,7 +6,7 @@ use super::selection::Excerpt;
 use crate::js;
 
 /// JSON.stringify, with C1 controls and bidirectional marks escaped as well.
-fn quote(value: &str) -> String {
+pub(super) fn quote(value: &str) -> String {
     let mut out = String::new();
     for c in js::quote(value).chars() {
         let code = c as u32;

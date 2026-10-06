@@ -1,8 +1,8 @@
 // Source coordinates and units: lines split on LF only, byte offsets per line, and the units a
-// file is judged in. A unit is a declaration from the Python or TypeScript parser, or a text
+// file is judged in. A unit is a declaration from the Python, PHP or TypeScript parser, or a text
 // chunk when a file has no usable syntax. Ported from jevgrep's core/source.ts.
 
-use super::{python, typescript};
+use super::{php, python, typescript};
 #[cfg(feature = "test-api")]
 use serde_json::{Value, json};
 
@@ -38,6 +38,7 @@ pub struct SourceUnit {
 pub enum Mode {
     Python,
     TypeScript,
+    Php,
     Text,
 }
 
@@ -89,6 +90,10 @@ impl<'a> SourceText<'a> {
 
 pub fn is_python(path: &str) -> bool {
     path.ends_with(".py") || path.ends_with(".pyi")
+}
+
+pub fn is_php(path: &str) -> bool {
+    path.ends_with(".php") || path.ends_with(".phtml")
 }
 
 /// /\.(?:[cm]?[jt]s|[jt]sx)$/
@@ -187,6 +192,11 @@ pub fn inspect(path: &str, source: &str, bounds: Bounds) -> Inspection {
         match python::declarations(source) {
             Some(declared) => (declared, comments_of_python, Mode::Python),
             None => return fallback(Fallback::Syntax, comments_of_python),
+        }
+    } else if is_php(path) {
+        match php::declarations(source) {
+            Some(parsed) => (parsed.units, parsed.comments, Mode::Php),
+            None => return fallback(Fallback::Syntax, Vec::new()),
         }
     } else if is_script(path) {
         let parsed = typescript::parse(path, source);

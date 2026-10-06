@@ -16,7 +16,7 @@ const REQUEST_LIMIT: usize = 50_000;
 const TIMEOUT_MS: u64 = 60_000; // jevgrep 0.4.3 and later, for TypeSafe: a large state can take longer than 15 s
 /// Our own parser identity: answers computed on jevgrep's CPython and TypeScript boundaries are
 /// never reused.
-const PARSER_VERSION: &str = "sessionkit-tree-sitter-python-0.25-oxc-0.151";
+const PARSER_VERSION: &str = "sessionkit-tree-sitter-python-0.25-php-0.24.2-oxc-0.151";
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Kind {

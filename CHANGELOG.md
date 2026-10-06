@@ -13,6 +13,10 @@ release notes, not links to public release artifacts. The project was named
 - Native Claude Code tools, `search_code` and `ask_file`, wrapping the existing
   semantic search and file-question commands. Includes bounded search output,
   batched questions and navigation guidance for main agents and subagents.
+- Compact agent search presentation with a configurable eight-file shortlist,
+  shared source budget and explicitly partial, declaration-focused snippets.
+- PHP declaration parsing for methods, functions, class headers and members.
+  Invalid PHP syntax falls back to text selection; parser-aware caches are versioned.
 - Experimental, opt-in user approval after a recognized Auto mode denial.
   Approval applies to one retry of the same call and arguments; it does not
   persist permission rules. Retry after a real classifier denial remains

@@ -56,7 +56,8 @@ requests are implemented in Rust, not duplicated in JavaScript.
 `plugin/hooks/index.js` registers the runtime modules. The plugin contains:
 
 - Search tools over the existing CLI: `search_code` and `ask_file`, with bounded
-  inputs, normal source exclusions and navigation guidance.
+  inputs, normal source exclusions and navigation guidance. Search offers a
+  compact shortlist and shares source budget before expanding excerpts.
 - Context and cache integrations: compaction, turn folding, cold-cache dialogs,
   large-file outlines and eligible unread-file edit retries.
 - Agent integrations: shadow routing, cost-awareness notes and repeated-report
@@ -78,7 +79,10 @@ already installed plugin or binary.
 The agent chooses a search or file-question tool. The plugin validates inputs
 and invokes the CLI through `$.process.run`, without a shell. Rust applies source
 eligibility rules and sends eligible data to TypeSafe. The plugin returns source
-evidence and diagnostics rather than synthesizing an answer. Exact-symbol
+evidence and diagnostics rather than synthesizing an answer. PHP, Python and
+JavaScript/TypeScript parsers provide declaration boundaries; malformed source
+falls back to text units. Presentation limits do not change discovery or file
+relevance scores, and partial snippets are explicitly identified. Exact-symbol
 searches remain the responsibility of ordinary Grep or equivalent tools.
 
 ### Context management

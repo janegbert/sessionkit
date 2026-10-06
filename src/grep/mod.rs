@@ -2,8 +2,10 @@
 // MIT): Jev judges folders, files and declarations for a question and the result is a list of
 // relevant files with verbatim source, for a coding agent to read.
 
+mod agent_render;
 mod evaluator;
 pub mod fs;
+mod php;
 mod python;
 mod render;
 mod requests;
@@ -24,6 +26,8 @@ defaults to this folder; put -- before a root that starts with -.
 
 Options:
   --max-source-bytes N     source to show; 0 means unlimited (default 0)
+  --agent-view             compact shortlist with source shared across files
+  --max-files N            shortlist size for --agent-view (default 8, maximum 100)
   --hidden                 include hidden paths
   --no-ignore              ignore .gitignore and .ignore files
   --include-dependencies   include dependency and build folders
@@ -51,6 +55,8 @@ struct Options {
     query: String,
     root: String,
     max_source_bytes: usize,
+    agent_view: bool,
+    max_files: usize,
     policy: fs::Policy,
     no_cache: bool,
     concurrency: usize,
@@ -64,7 +70,7 @@ fn fail(message: &str) -> ! {
 
 fn parse_arguments(argv: &[String]) -> Options {
     let mut positionals = Vec::new();
-    let mut options = Options { query: String::new(), root: String::new(), max_source_bytes: 0, policy: fs::Policy::default(), no_cache: false, concurrency: 32 };
+    let mut options = Options { query: String::new(), root: String::new(), max_source_bytes: 0, agent_view: false, max_files: 8, policy: fs::Policy::default(), no_cache: false, concurrency: 32 };
     let mut rest_are_positional = false;
     let mut i = 0;
     let integer = |value: Option<&String>| value.filter(|v| !v.is_empty() && v.bytes().all(|b| b.is_ascii_digit())).and_then(|v| v.parse::<usize>().ok());
@@ -78,6 +84,12 @@ fn parse_arguments(argv: &[String]) -> Options {
                 "-h" | "--help" => {
                     println!("{USAGE}");
                     std::process::exit(0);
+                }
+                "--agent-view" => options.agent_view = true,
+                "--max-files" => {
+                    i += 1;
+                    options.max_files = integer(argv.get(i)).filter(|&n| (1..=100).contains(&n))
+                        .unwrap_or_else(|| fail("--max-files must be an integer from 1 to 100."));
                 }
                 "--hidden" => options.policy.hidden = true,
                 "--no-ignore" => options.policy.no_ignore = true,
@@ -133,7 +145,12 @@ pub fn grep_main(argv: &[String]) -> Result<()> {
             "incomplete" => 2,
             _ => 0,
         };
-        Ok((render::render(&outcome, options.max_source_bytes), code))
+        let output = if options.agent_view {
+            agent_render::render(&outcome, if options.max_source_bytes == 0 { 12000 } else { options.max_source_bytes }, options.max_files)
+        } else {
+            render::render(&outcome, options.max_source_bytes)
+        };
+        Ok((output, code))
     };
     match run() {
         Ok((text, code)) => {
@@ -168,7 +185,7 @@ pub fn inspect_main(argv: &[String]) -> Result<()> {
             "byteStart": u.byte_start, "byteEnd": u.byte_end, "partial": u.partial,
             "ownerHeaders": u.owner_headers.iter().map(|r| r.json()).collect::<Vec<_>>(),
         })).collect();
-        let mode = match inspection.mode { source::Mode::Python => "python", source::Mode::TypeScript => "typescript", source::Mode::Text => "text" };
+        let mode = match inspection.mode { source::Mode::Python => "python", source::Mode::TypeScript => "typescript", source::Mode::Php => "php", source::Mode::Text => "text" };
         let fallback = inspection.fallback.map(|f| match f { source::Fallback::Unsupported => "unsupported", source::Fallback::Syntax => "syntax", source::Fallback::Size => "size" });
         if std::env::var_os("SESSIONKIT_TREE").is_some() {
             println!("{}", if source::is_python(path) { python::tree_of(&text) } else { typescript::tree_of(path, &text) });

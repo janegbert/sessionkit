@@ -616,9 +616,25 @@ case, not a token or latency benchmark. See [verification notes](code-search-too
 - **Output.** All output goes to stdout. Exit codes: 0 complete, 2 incomplete (some parts could
   not be judged; the output says which), 1 failed, 130 interrupted.
 
+### Compact agent presentation and PHP support
+
+`sessionkit grep --agent-view --max-files 8 --max-source-bytes 12000 "question"`
+uses the same discovery pipeline with a bounded shortlist. It reports the total
+result count, preserves failure/incomplete diagnostics, and reserves source for
+multiple files before expanding the highest-ranked excerpts. Oversized snippets
+are cropped near high-scoring declarations and explicitly labeled partial.
+Increase `--max-files` (1..100) or narrow the question/root to inspect more.
+With no source budget specified, agent-view uses 12,000 bytes; the ordinary CLI
+view remains full, with its existing unlimited source default.
+
+PHP and PHTML files now use tree-sitter declaration boundaries. Methods are
+separate selection units rather than whole class bodies; class headers remain
+available as context. Malformed or oversized source falls back to text handling.
+The parser identity changed, so old cached decisions are not reused.
+
 ### How it relates to jevgrep
 
-`sessionkit grep` asks Jev the same questions as `jg` 0.4.2 (model `jev-1.13.0`): the same
+The Python/JavaScript/TypeScript port originally asked Jev the same questions as `jg` 0.4.2 (model `jev-1.13.0`): the same
 wording, thresholds, batch limits, key order and traversal. Compared with `jg` against a local
 stand-in for TypeSafe, on eleven questions in eight repositories, it sent the same requests byte
 for byte and printed the same output. The one difference in requests is the order of the

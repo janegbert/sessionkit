@@ -417,7 +417,7 @@ impl<'a> Search<'a> {
         });
         let mut declarations: Vec<Value> = Vec::new();
         let mut index_truncated = false;
-        if truncated && (source::is_python(path) || source::is_script(path)) && bytes.len() <= 1_000_000 {
+        if truncated && (source::is_python(path) || source::is_script(path) || source::is_php(path)) && bytes.len() <= 1_000_000 {
             let syntax = source::inspect(path, &snapshot.source, Bounds { max_unit_bytes: 4.max(bytes.len()), ..Bounds::default() });
             declarations = syntax.units.iter().filter(|unit| !unit.partial)
                 .map(|unit| json!({"name": unit.name, "startLine": unit.range.start, "endLine": unit.range.end})).collect();

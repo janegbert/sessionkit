@@ -20,12 +20,15 @@ const specs = [
     description: "Find implementation, callers and tests for a behavior when you do not know where it lives. " +
       "Prefer this to speculative keyword searches or reading files one by one. Returns ranked files and verbatim " +
       "source excerpts with line numbers via sessionkit grep, not a generated answer. For exact symbols/literals use Grep. " +
-      "Read excerpts first, then only missing ranges. Eligible source is sent to TypeSafe (paid Jev requests, cached). " +
+      "Shows up to eight files by default; increase max_files for more results. Source is shared across files and cropped " +
+      "around selected declarations when needed. Read excerpts first, then only missing ranges. " +
+      "Eligible source is sent to TypeSafe (paid Jev requests, cached). " +
       "Hidden, ignored, dependency and sensitive files stay excluded. Incomplete discovery is not evidence of absence.",
     inputSchema: { type: "object", additionalProperties: false, required: ["question"], properties: {
       question: { type: "string", minLength: 1, maxLength: 4096, description: "One natural-language behavior to locate." },
       root: { type: "string", minLength: 1, description: "Search folder; default is the session working directory. Use an explicit root in a subagent with a different cwd." },
-      max_source_bytes: { type: "integer", minimum: 1, maximum: 100000, default: 12000, description: "Budget for returned source excerpts; not a completeness guarantee." },
+      max_source_bytes: { type: "integer", minimum: 1, maximum: 100000, default: 12000, description: "Source budget shared across shortlisted files; partial snippets are labeled." },
+      max_files: { type: "integer", minimum: 1, maximum: 100, default: 8, description: "Maximum files displayed. Increase to show additional results; hidden files are not excluded from discovery." },
     } },
   },
   {
@@ -94,12 +97,13 @@ export const register = (on, options) => {
   });
   on("tool.call", { tool: SEARCH }, async ($, event) => {
     const budget = event.max_source_bytes ?? 12000;
-    if (!text(event.question) || (event.root !== undefined && !text(event.root)) ||
+    const maxFiles = event.max_files ?? 8;
+    if (!Number.isInteger(maxFiles) || maxFiles < 1 || maxFiles > 100 || !text(event.question) || (event.root !== undefined && !text(event.root)) ||
         !Number.isInteger(budget) || budget < 1 || budget > 100000) {
-      return { result: "sessionkit: invalid search input. Supply a question, optional root and a source budget of 1..100000 bytes." };
+      return { result: "sessionkit: invalid search input. Supply a question, optional root, max_files of 1..100 and a source budget of 1..100000 bytes." };
     }
     // -- ends CLI option parsing, so question/root can never enable unsafe flags.
-    return run($, [SESSIONKIT, "grep", "--max-source-bytes", String(budget), "--", event.question, event.root ?? "."]);
+    return run($, [SESSIONKIT, "grep", "--agent-view", "--max-files", String(maxFiles), "--max-source-bytes", String(budget), "--", event.question, event.root ?? "."]);
   });
   on("tool.call", { tool: ASK }, async ($, event) => {
     const mode = event.mode ?? "facts";

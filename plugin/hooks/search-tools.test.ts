@@ -12,7 +12,7 @@ test("semantic search is a native tool call over the existing CLI", async ($, on
     return { value: { exitCode: 0, stdout: "src/retry.rs:20-40\nretry evidence", stderr: "" } };
   });
   const result = await $.tool.call({ tool: SEARCH, question: "Where does upload retry?", root: "src" });
-  expect(command.argv.slice(1)).toEqual(["grep", "--max-source-bytes", "12000", "--", "Where does upload retry?", "src"]);
+  expect(command.argv.slice(1)).toEqual(["grep", "--agent-view", "--max-files", "8", "--max-source-bytes", "12000", "--", "Where does upload retry?", "src"]);
   expect(command.init.timeoutMs).toBe(120000);
   expect(result.result).toContain("retry evidence");
 });
@@ -39,7 +39,7 @@ test("search roots and questions cannot become unsafe CLI flags", async ($, on) 
     return { value: { exitCode: 0, stdout: "no results", stderr: "" } };
   });
   await $.tool.call({ tool: SEARCH, question: "--include-sensitive", root: "--hidden" });
-  expect(args).toEqual(["grep", "--max-source-bytes", "12000", "--", "--include-sensitive", "--hidden"]);
+  expect(args).toEqual(["grep", "--agent-view", "--max-files", "8", "--max-source-bytes", "12000", "--", "--include-sensitive", "--hidden"]);
 });
 
 // Direct callback tests can exercise bad inputs even if schema validation would
@@ -69,6 +69,7 @@ test("registration is opt-out and offers only two bounded schemas", async () => 
   await w.start();
   expect(w.seen.registered.map((s) => s.name)).toEqual(["search_code", "ask_file"]);
   expect(w.seen.registered[0].inputSchema.properties.max_source_bytes.default).toBe(12000);
+  expect(w.seen.registered[0].inputSchema.properties.max_files.default).toBe(8);
   const describe = [...w.hooks.entries()].find(([key]) => key.startsWith("tool.describe:"))[1];
   const shown = await describe(w.$, { tool: SEARCH }, async () => ({ description: "existing description", isDeferred: true }));
   expect(shown.description).toBe("existing description");
@@ -104,7 +105,8 @@ test("registration failure leaves prompts alone and forwards session start", asy
 test("invalid inputs never start a subprocess", async () => {
   const w = world();
   for (const input of [{ question: "" }, { question: "Retries?", max_source_bytes: 0 },
-    { question: "Retries?", max_source_bytes: 100001 }, { question: "Retries?", root: "" }]) {
+    { question: "Retries?", max_source_bytes: 100001 }, { question: "Retries?", root: "" },
+    { question: "Retries?", max_files: 0 }, { question: "Retries?", max_files: 101 }]) {
     expect((await w.call(SEARCH, input)).result).toContain("invalid");
   }
   for (const input of [{ path: "a.rs", questions: [] }, { path: "a.rs", questions: ["--include-sensitive"] },

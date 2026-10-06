@@ -62,6 +62,12 @@ to agents, with a short navigation rule for the main agent and subagents. An
 Explore subagent chose search_code in a live fixture test without a prescribed
 tool name. Broader adoption and token savings still need measurement.
 
+The agent search defaults to an eight-file shortlist and shares its 12 KB source
+budget across the selected files. Partial snippets are labeled; increase
+`max_files` to reveal additional results. PHP methods, Python declarations and
+JavaScript/TypeScript declarations are parsed for focused source selection.
+The CLI keeps its full result view; use `--agent-view` for the compact presentation.
+
 Disable *Code search tools* in the plugin options if you prefer CLI-only use.
 [Tool design and verification →](docs/code-search-tools.md)
 
