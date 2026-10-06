@@ -1,0 +1,132 @@
+[
+  {
+    "name": "rename a local variable",
+    "expect": false,
+    "kind": "edit",
+    "file": "src/checkout/total.rs",
+    "change": "-    let t = items.iter().map(|i| i.price * i.quantity).sum();\n-    t\n+    let total = items.iter().map(|i| i.price * i.quantity).sum();\n+    total",
+    "against": []
+  },
+  {
+    "name": "fix an off-by-one in invoice numbering",
+    "expect": false,
+    "kind": "edit",
+    "file": "src/billing/numbering.rs",
+    "change": "-    let next = last + 2;\n+    let next = last + 1;",
+    "against": []
+  },
+  {
+    "name": "add a unit test",
+    "expect": false,
+    "kind": "edit",
+    "file": "src/pricing/discount.rs",
+    "change": "+#[test]\n+fn ten_percent_off_a_hundred_is_ninety() {\n+    assert_eq!(apply(Discount::percent(10), 100), 90);\n+}",
+    "against": []
+  },
+  {
+    "name": "change catalog code that already uses pricing (known debt, not widened)",
+    "expect": false,
+    "kind": "edit",
+    "file": "src/catalog/listing.rs",
+    "change": " use crate::pricing::price_of;\n-    let label = format!(\"{} - {}\", product.name, price_of(product));\n+    let label = format!(\"{} ({})\", product.name, price_of(product));",
+    "against": []
+  },
+  {
+    "name": "add a field to billing::Customer that accounts::Customer also has (deliberate)",
+    "expect": false,
+    "kind": "edit",
+    "file": "src/billing/customer.rs",
+    "change": " pub struct Customer {\n     pub legal_name: String,\n     pub vat_number: Option<String>,\n+    pub email: String,\n }",
+    "against": []
+  },
+  {
+    "name": "checkout imports billing's invoice repository",
+    "expect": true,
+    "kind": "edit",
+    "file": "src/checkout/complete.rs",
+    "change": "+use crate::billing::persistence::InvoiceRepository;\n+\n     pub fn complete(order: &Order, db: &Pool) -> Result<()> {\n+        InvoiceRepository::new(db).insert(&Invoice::for_order(order))?;",
+    "against": [
+      "0002"
+    ]
+  },
+  {
+    "name": "pricing adds another import of catalog (widens AD-001)",
+    "expect": true,
+    "kind": "edit",
+    "file": "src/pricing/tax.rs",
+    "change": "+use crate::catalog::category::Category;\n-pub fn rate(product_id: u64) -> f64 {\n+pub fn rate(product_id: u64, category: &Category) -> f64 {",
+    "against": []
+  },
+  {
+    "name": "domain code builds its own Postgres pool",
+    "expect": true,
+    "kind": "edit",
+    "file": "src/accounts/preferences.rs",
+    "change": "+use crate::infra::postgres::Pool;\n+\n+fn pool() -> Pool {\n+    Pool::connect(&std::env::var(\"DATABASE_URL\").unwrap())\n+}",
+    "against": []
+  },
+  {
+    "name": "a second invoice type in checkout",
+    "expect": true,
+    "kind": "create",
+    "file": "src/checkout/invoice.rs",
+    "change": "pub struct Invoice {\n    pub number: String,\n    pub order_id: u64,\n    pub total: u64,\n    pub pdf: Vec<u8>,\n}\n\nimpl Invoice {\n    pub fn save(&self, db: &Pool) -> Result<()> { db.execute(\"insert into invoices ...\") }\n}",
+    "against": [
+      "0002"
+    ]
+  },
+  {
+    "name": "a plan that moves invoice persistence into checkout",
+    "expect": true,
+    "kind": "plan",
+    "file": "",
+    "change": "Plan: saved delivery addresses\n1. Add a `saved_addresses` table and a `SavedAddress` struct in checkout.\n2. When an order completes, checkout writes the invoice row itself instead of calling BillingGateway, so the address lands on the invoice in one transaction.\n3. Add tests.",
+    "against": [
+      "0002"
+    ]
+  },
+  {
+    "name": "a background worker with a queue",
+    "expect": true,
+    "kind": "create",
+    "file": "src/billing/worker.rs",
+    "change": "use tokio::sync::mpsc;\n\npub fn spawn(rx: mpsc::Receiver<OrderCompleted>) {\n    tokio::spawn(async move {\n        while let Some(event) = rx.recv().await { render_pdf(event).await; }\n    });\n}",
+    "against": null
+  },
+  {
+    "name": "a new external dependency in Cargo.toml",
+    "expect": true,
+    "kind": "edit",
+    "file": "Cargo.toml",
+    "change": " [dependencies]\n serde = \"1\"\n+rdkafka = \"0.36\"",
+    "against": null
+  },
+  {
+    "name": "checkout computes the invoice number itself",
+    "kind": "edit",
+    "file": "src/checkout/complete.rs",
+    "expect": true,
+    "against": [
+      "0003"
+    ],
+    "change": "     pub fn complete(order: &Order, gateway: &BillingGateway) -> Result<()> {\n+        let number = format!(\"INV-{}-{}\", order.created.year(), order.id);\n-        gateway.create_invoice(order)?;\n+        gateway.create_invoice_numbered(order, &number)?;"
+  },
+  {
+    "name": "a plan to run billing as its own HTTP service",
+    "kind": "plan",
+    "file": "",
+    "expect": true,
+    "against": [
+      "0001"
+    ],
+    "change": "Plan: scale invoice PDFs\n1. Move billing into a separate `billing-service` binary with an axum HTTP API.\n2. Checkout calls it over HTTP with reqwest instead of BillingGateway.\n3. Deploy it as its own container."
+  },
+  {
+    "name": "billing assigns the number at finalization (follows ADR-0003)",
+    "kind": "edit",
+    "file": "src/billing/finalize.rs",
+    "expect": false,
+    "against": [],
+    "change": "     pub fn finalize(&self, tx: &mut Tx, invoice: &mut Invoice) -> Result<()> {\n+        invoice.number = Some(self.numbers.next(tx)?);\n         self.store.save(tx, invoice)"
+  }
+]

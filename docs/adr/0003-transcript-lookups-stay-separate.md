@@ -1,0 +1,3 @@
+# Transcript lookups stay separate
+
+`src/transcript.rs` owns the format of a transcript entry, but not where transcripts are found. `next::transcript_of`, `compact::transcript`, `start::session_files` and `usage::transcript_files` stay where they are. They answer four different questions (an exact id, a path or `last` or a unique prefix, the newest sessions of this folder and its worktrees, every transcript with its subagents) and share only the folder layout under `~/.claude/projects`. One lookup with four modes would be as wide as the four functions, and a mistake in it would make a command pick another session.

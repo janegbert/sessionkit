@@ -1,0 +1,12 @@
+{
+  "name": "sessionkit",
+  "owner": { "name": "janegbert" },
+  "plugins": [
+    {
+      "name": "sessionkit",
+      "source": "./",
+      "description": "Code search, focused file questions, lean context and cache-cost awareness for Claude Code.",
+      "version": "__VERSION__"
+    }
+  ]
+}

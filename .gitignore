@@ -1,0 +1,7 @@
+eval/results/
+target/
+.claude/
+.env
+.env.*
+packaging/homebrew/*.tar.gz
+packaging/homebrew/*.tar.gz.sha256

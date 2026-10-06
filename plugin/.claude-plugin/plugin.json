@@ -1,0 +1,61 @@
+{
+  "name": "sessionkit",
+  "version": "__VERSION__",
+  "description": "Code search, focused file questions, lean context and cache-cost awareness for Claude Code.",
+  "license": "MIT",
+  "userConfig": {
+    "codeSearchTools": {
+      "type": "boolean",
+      "title": "Code search tools",
+      "description": "Offers search_code and ask_file as visible agent tools over sessionkit grep/ask, with a short navigation instruction. Eligible source is sent to TypeSafe only when an agent calls a tool; Jev calls are paid. Exact symbols stay for Grep. Disable to keep CLI-only navigation.",
+      "default": true
+    },
+    "askOnAutoDenial": {
+      "type": "boolean",
+      "title": "Ask after an Auto denial (experimental)",
+      "description": "After an Auto denial in the main loop, asks whether to allow that exact action once. No Jev, inferred consent or saved permission rules. Closing the dialog or a missing interactive UI keeps the denial. Same-call retry after a real classifier denial has not yet been verified live.",
+      "default": false
+    },
+    "permissionProbe": {
+      "type": "boolean",
+      "title": "Permission probe (prototype)",
+      "description": "Diagnostic only: logs tool.check inputs and verdicts, including potentially sensitive arguments, to the debug log. Never changes a permission decision or prompts for approval.",
+      "default": false
+    },
+    "architect": {
+      "type": "string",
+      "title": "Architect",
+      "description": "In a repository onboarded with /sessionkit:architecture onboard: advise puts a note in the agent's context for a plan or change Jev finds architectural, with the decision records it may go against; shadow only logs Jev's reading; off checks nothing.",
+      "options": [
+        "advise",
+        "shadow",
+        "off"
+      ],
+      "default": "advise"
+    },
+    "readOutline": {
+      "type": "boolean",
+      "title": "Outline first for large files",
+      "description": "The first whole read of a file of 400 lines or more shows its first 20 lines and every declaration and heading with its line number. The agent reads the parts it needs; a second whole read of the file gets all of it.",
+      "default": false
+    },
+    "applyEffort": {
+      "type": "boolean",
+      "title": "Lower the effort per prompt",
+      "description": "A turn you typed runs at the effort level Jev finds enough for its prompt, when that is lower than the session's. Off: the level is only logged. On Opus 5.5, Sonnet 5.5 and Fable 5.1 with an API key or a subscription the prompt cache holds; on other models and providers a change of effort writes the whole context to the cache again.",
+      "default": false
+    },
+    "foldTurns": {
+      "type": "boolean",
+      "title": "Fold a turn when it ends",
+      "description": "When a turn ends that added 20,000 characters of tool output or more, the output of each call that changed no file is cut to its first 300 characters. Everything before the turn stays in the prompt cache, and all prompts, answers and calls stay as they were. Interactive sessions only.",
+      "default": false
+    },
+    "costAwareness": {
+      "type": "boolean",
+      "title": "Cost awareness (experimental)",
+      "description": "Tells the agent what its tokens cost, at the moments it can act on it: why cost matters once per session and per subagent, the cost note with your messages only when the context has doubled (instead of with every message), a subagent's own cost each time its context doubles, and what a subagent took when it ends. Where the status line knows your 5-hour limit, the share of it stands beside the dollars.",
+      "default": false
+    }
+  }
+}
